@@ -1,0 +1,13 @@
+spring:
+  config:
+    import: optional:file:.env.dev[.properties]
+  datasource:
+    username: ${MYSQL_USERNAME}
+    password: ${MYSQL_PASSWORD}
+    url: jdbc:${DATABASE_TYPE}://${MYSQL_HOST}:${DATABASE_PORT}/${DATABASE_NAME}?characterEncoding=UTF8&useSSL=false&serverTimezone=Asia/Shanghai&allowPublicKeyRetrieval=true
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    druid:
+      max-active: 20
+
+
+

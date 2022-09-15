@@ -1,0 +1,6 @@
+spring:
+  profiles:
+    active: dev
+  flyway:
+    enabled: false
+    encoding: utf-8
