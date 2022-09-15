@@ -1,6 +1,9 @@
 spring:
   profiles:
     active: dev
-  flyway:
-    enabled: false
-    encoding: utf-8
+  datasource:
+    druid:
+      stat-view-servlet:
+        enabled: true
+        login-username: admin
+        login-password: admin

@@ -8,6 +8,8 @@ spring:
     driver-class-name: com.mysql.cj.jdbc.Driver
     druid:
       max-active: 20
-
+  flyway:
+    enabled: true
+    encoding: utf-8
 
 
