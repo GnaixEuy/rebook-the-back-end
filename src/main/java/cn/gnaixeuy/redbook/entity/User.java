@@ -48,5 +48,27 @@ public class User {
     private boolean enabled;
     @TableField
     private boolean locked;
+    /**
+     * TODO 头像文件Id
+     */
+    @TableField(exist = false)
+    private File userProfilePhoto;
+    /**
+     * TODO 背景图文件Id
+     */
+    @TableField(exist = false)
+    private File userBackgroundPhoto;
+
+    @TableField
+    private String userDescription;
+    @TableField
+    private String userRegion;
+    @TableField
+    private String userProfessional;
+    @TableField
+    private String userSchool;
+    @TableField
+    private Integer userLevel;
+
 
 }

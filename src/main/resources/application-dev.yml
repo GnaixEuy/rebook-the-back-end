@@ -11,5 +11,7 @@ spring:
   flyway:
     enabled: true
     encoding: utf-8
+fdfs:
+  tracker-list: ${FASTDFS_HOST}:22122
 
 

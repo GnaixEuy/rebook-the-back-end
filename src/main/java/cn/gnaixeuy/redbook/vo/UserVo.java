@@ -1,7 +1,7 @@
 package cn.gnaixeuy.redbook.vo;
 
+import cn.gnaixeuy.redbook.entity.File;
 import cn.gnaixeuy.redbook.enums.Gender;
-import com.baomidou.mybatisplus.annotation.TableField;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -35,5 +35,24 @@ public class UserVo {
     private boolean enabled;
 
     private boolean locked;
+
+    /**
+     * TODO 头像文件Id
+     */
+    private File profilePhotoImage;
+
+    /**
+     * TODO 背景图文件Id
+     */
+    private File backgroundImage;
+
+    private String userDescription;
+
+    private String userRegion;
+
+    private String userProfessional;
+
+    private String userSchool;
+    private Integer userLevel;
 
 }
