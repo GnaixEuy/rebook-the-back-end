@@ -1,0 +1,24 @@
+package cn.gnaixeuy.redbook.mapper;
+
+import cn.gnaixeuy.redbook.entity.User;
+import cn.gnaixeuy.redbook.vo.UserVo;
+import org.mapstruct.Mapper;
+import org.mapstruct.Mapping;
+import org.springframework.stereotype.Component;
+
+/**
+ * <img src="http://blog.gnaixeuy.cn/wp-content/uploads/2022/09/倒闭.png"/>
+ *
+ * <p>项目： redbook </p>
+ *
+ * @author GnaixEuy
+ * @date 2022/9/15
+ * @see <a href="https://github.com/GnaixEuy"> GnaixEuy的GitHub </a>
+ */
+@Mapper(componentModel = "spring")
+public interface UserMapper {
+
+    @Mapping(target = "userBirthday", source = "userBirthday", dateFormat = "yyyy-MM-dd HH:mm:ss")
+    UserVo entityToVo(User user);
+
+}
