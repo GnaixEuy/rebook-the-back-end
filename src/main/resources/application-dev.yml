@@ -11,7 +11,17 @@ spring:
   flyway:
     enabled: true
     encoding: utf-8
+  security:
+    user:
+      name: test
+      password: test
+
+mybatis-plus:
+  configuration:
+    log-impl: org.apache.ibatis.logging.stdout.StdOutImpl
 fdfs:
   tracker-list: ${FASTDFS_HOST}:22122
+
+
 
 

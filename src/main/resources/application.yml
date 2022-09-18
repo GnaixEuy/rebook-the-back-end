@@ -7,6 +7,16 @@ spring:
         enabled: true
         login-username: admin
         login-password: admin
+mybatis-plus:
+  mapper-locations: classpath:cn/gnaixeuy/redbook/dao/impl/*.xml
+  type-aliases-package: cn.gnaixeuy.redbook.entity
+  configuration:
+    default-enum-type-handler: org.apache.ibatis.type.EnumOrdinalTypeHandler
+    map-underscore-to-camel-case: true
+  global-config:
+    db-config:
+      id-type: assign_uuid
+      table-underline: true
 fdfs:
   soTimeout: 15000  # 读取时间
   connectTimeout: 15000  # 链接超时

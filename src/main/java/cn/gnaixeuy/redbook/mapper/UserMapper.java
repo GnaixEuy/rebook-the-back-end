@@ -1,10 +1,12 @@
 package cn.gnaixeuy.redbook.mapper;
 
+import cn.gnaixeuy.redbook.dto.UserDto;
 import cn.gnaixeuy.redbook.entity.User;
+import cn.gnaixeuy.redbook.vo.UserCreateRequest;
 import cn.gnaixeuy.redbook.vo.UserVo;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
-import org.springframework.stereotype.Component;
+import org.mapstruct.Mappings;
 
 /**
  * <img src="http://blog.gnaixeuy.cn/wp-content/uploads/2022/09/倒闭.png"/>
@@ -18,7 +20,23 @@ import org.springframework.stereotype.Component;
 @Mapper(componentModel = "spring")
 public interface UserMapper {
 
-    @Mapping(target = "userBirthday", source = "userBirthday", dateFormat = "yyyy-MM-dd HH:mm:ss")
-    UserVo entityToVo(User user);
+    /**
+     * @param user 实体层对象
+     * @return userVo vo对象
+     */
+    @Mappings(value = {
+            @Mapping(target = "birthday", source = "birthday", dateFormat = "yyyy-MM-dd HH:mm:ss"),
+    })
+    UserDto entityToDto(User user);
+
+    @Mappings(value = {
+            @Mapping(target = "birthday", source = "birthday", dateFormat = "yyyy-MM-dd HH:mm:ss"),
+            @Mapping(target = "profilePhotoImage", source = "profilePhoto"),
+            @Mapping(target = "backgroundImage", source = "backgroundPhoto")
+    })
+    UserVo dtoToVo(UserDto userDto);
+
+
+    User userCreateRequstToEntity(UserCreateRequest userCreateRequest);
 
 }

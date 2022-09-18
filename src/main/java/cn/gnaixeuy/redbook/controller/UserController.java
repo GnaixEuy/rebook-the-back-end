@@ -1,6 +1,5 @@
 package cn.gnaixeuy.redbook.controller;
 
-import cn.gnaixeuy.redbook.entity.User;
 import cn.gnaixeuy.redbook.mapper.UserMapper;
 import cn.gnaixeuy.redbook.service.UserService;
 import cn.gnaixeuy.redbook.vo.ResponseResult;
@@ -35,9 +34,9 @@ public class UserController {
                 this.userService
                         .list()
                         .stream()
-                        .map(userMapper::entityToVo)
-                        .collect(Collectors.toList()
-                        )
+                        .map(this.userMapper::entityToDto)
+                        .map(this.userMapper::dtoToVo)
+                        .collect(Collectors.toList())
         );
     }
 

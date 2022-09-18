@@ -8,8 +8,14 @@ import com.baomidou.mybatisplus.annotation.TableName;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
+import org.springframework.security.core.userdetails.UserDetails;
 
+import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Date;
+import java.util.List;
 
 /**
  * <img src="http://blog.gnaixeuy.cn/wp-content/uploads/2022/06/bug.png"/>
@@ -23,27 +29,29 @@ import java.util.Date;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-@TableName(value = "user")
-public class User {
+@TableName(value = "user", resultMap = "userResultMap")
+public class User implements UserDetails {
 
     @TableId(type = IdType.ASSIGN_UUID)
-    private String userId;
+    private String id;
     @TableField
-    private String userEmail;
+    private String email;
     @TableField
-    private String userNickname;
+    private String nickname;
     @TableField
-    private String userPhone;
+    private String phone;
     @TableField
-    private String userIdentityCardId;
+    private String password;
     @TableField
-    private Gender userGender;
+    private String identityCardId;
     @TableField
-    private Date userCreateDateTime;
+    private Gender gender;
     @TableField
-    private Date userUpdateDateTime;
+    private Date createdDateTime;
     @TableField
-    private Date userBirthday;
+    private Date updatedDateTime;
+    @TableField
+    private Date birthday;
     @TableField
     private boolean enabled;
     @TableField
@@ -52,23 +60,56 @@ public class User {
      * TODO 头像文件Id
      */
     @TableField(exist = false)
-    private File userProfilePhoto;
+    private File profilePhoto;
     /**
      * TODO 背景图文件Id
      */
     @TableField(exist = false)
-    private File userBackgroundPhoto;
+    private File backgroundPhoto;
 
     @TableField
-    private String userDescription;
+    private String description;
     @TableField
-    private String userRegion;
+    private String region;
     @TableField
-    private String userProfessional;
+    private String professional;
     @TableField
-    private String userSchool;
+    private String school;
     @TableField
-    private Integer userLevel;
+    private Integer level;
+    @TableField(exist = false)
+    private List<Role> roles;
 
+    @Override
+    public Collection<? extends GrantedAuthority> getAuthorities() {
+        List<GrantedAuthority> authorities = new ArrayList<>();
+        this.roles.forEach(item -> authorities.add(new SimpleGrantedAuthority(item.getName())));
+        return authorities;
+    }
+
+    @Override
+    public String getPassword() {
+        return this.password;
+    }
+
+    @Override
+    public String getUsername() {
+        return this.phone;
+    }
+
+    @Override
+    public boolean isAccountNonExpired() {
+        return this.enabled;
+    }
+
+    @Override
+    public boolean isAccountNonLocked() {
+        return !this.locked;
+    }
+
+    @Override
+    public boolean isCredentialsNonExpired() {
+        return true;
+    }
 
 }

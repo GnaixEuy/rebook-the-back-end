@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="cn.gnaixeuy.redbook.dao.UserDao">
+
+    <!--    TODO    <collection column="" property="profilePhoto" javaType="cn.gnaixeuy.redbook.entity.File" select=""/>-->
+    <!--    TODO    <collection column="" property="backgroundPhoto" javaType="cn.gnaixeuy.redbook.entity.File" select=""/>-->
+
+
+    <resultMap id="userResultMap" type="cn.gnaixeuy.redbook.entity.User">
+        <id column="id" property="id"/>
+        <result column="email" property="email"/>
+        <result column="nickname" property="nickname"/>
+        <result column="phone" property="phone"/>
+        <result column="password" property="password"/>
+        <result column="identity_card_id" property="identityCardId"/>
+        <result column="gender" property="gender"/>
+        <result column="created_date_time" property="createdDateTime"/>
+        <result column="updated_date_time" property="updatedDateTime"/>
+        <result column="birthday" property="birthday"/>
+        <result column="enabled" property="enabled"/>
+        <result column="locked" property="locked"/>
+        <result column="description" property="description"/>
+        <result column="region" property="region"/>
+        <result column="professional" property="professional"/>
+        <result column="school" property="school"/>
+        <result column="level" property="level"/>
+        <collection column="id" property="roles"
+                    javaType="java.util.ArrayList"
+                    ofType="cn.gnaixeuy.redbook.entity.Role"
+                    select="selectUserRoleByUserId"/>
+    </resultMap>
+
+    <select id="selectUserRoleByUserId" resultType="cn.gnaixeuy.redbook.entity.Role">
+        SELECT *
+        FROM redbook.role
+        WHERE id IN (SELECT role_id
+                     FROM redbook.user_role_associate
+                     WHERE user_id = #{id})
+    </select>
+
+</mapper>

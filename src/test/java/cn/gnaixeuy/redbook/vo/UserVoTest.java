@@ -1,5 +1,6 @@
 package cn.gnaixeuy.redbook.vo;
 
+import cn.gnaixeuy.redbook.dto.UserDto;
 import cn.gnaixeuy.redbook.entity.User;
 import cn.gnaixeuy.redbook.enums.Gender;
 import cn.gnaixeuy.redbook.mapper.UserMapper;
@@ -19,35 +20,31 @@ import java.util.Date;
  * @see <a href="https://github.com/GnaixEuy"> GnaixEuy的GitHub </a>
  */
 @SpringBootTest
-class UserVoTest {
+class UserDtoTest {
 
     @Autowired
     private UserMapper userMapper;
 
     @Test
-    public void entityToVo() {
-        User user = new User(
-                "1",
-                "123088@test.com",
-                "测试",
-                "1234-1234-123",
-                "123456789012345678",
-                Gender.MAN,
-                new Date(),
-                new Date(),
-                new Date(),
-                true,
-                true,
-                null,
-                null,
-                "测试用户",
-                "厦门",
-                "学生",
-                "jmu",
-                1
-        );
-        UserVo userVo = this.userMapper.entityToVo(user);
-        System.out.println(userVo);
+    public void entityToDto() {
+        User user = new User();
+        user.setId("1");
+        user.setEmail("123088@test.com");
+        user.setNickname("测试");
+        user.setPhone("1234-1234-123");
+        user.setIdentityCardId("123456789012345678");
+        user.setGender(Gender.MAN);
+        user.setCreatedDateTime(new Date());
+        user.setUpdatedDateTime(new Date());
+        user.setBirthday(new Date());
+        user.setLocked(false);
+        user.setEnabled(true);
+        user.setRegion("厦门");
+        user.setLevel(1);
+        user.setSchool("jmu");
+        user.setProfessional("student");
+        UserDto userDto = this.userMapper.entityToDto(user);
+        System.out.println(userDto);
     }
 
 

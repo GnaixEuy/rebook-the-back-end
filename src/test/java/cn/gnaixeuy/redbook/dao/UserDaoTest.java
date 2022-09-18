@@ -1,6 +1,7 @@
 package cn.gnaixeuy.redbook.dao;
 
 import cn.gnaixeuy.redbook.entity.User;
+import cn.gnaixeuy.redbook.entity.common.UserRoleAssociate;
 import com.baomidou.mybatisplus.core.toolkit.Wrappers;
 import org.junit.jupiter.api.MethodOrderer;
 import org.junit.jupiter.api.Order;
@@ -32,6 +33,8 @@ class UserDaoTest {
 
     @Autowired
     private UserDao userDao;
+    @Autowired
+    private UserRoleAssociateDao userRoleAssociateDao;
 
     @Test
     @Order(1)
@@ -45,7 +48,7 @@ class UserDaoTest {
     @Order(2)
     public void testInsertUser() {
         User user = new User();
-        user.setUserPhone("12312312312");
+        user.setPhone("12312312312");
         int result = this.userDao.insert(user);
         assertEquals(1, result);
     }
@@ -55,24 +58,26 @@ class UserDaoTest {
     public void testUpdateUser() {
         User user = this.userDao.selectOne(Wrappers
                 .<User>lambdaQuery()
-                .eq(User::getUserId, "2da22d1f-5bd8-92e8-4354-fca11d8042b7"));
+                .eq(User::getId, "1"));
         assertNotNull(user);
-        user.setUserNickname("测试小子");
+        user.setNickname("测试小子");
         int result = this.userDao.updateById(user);
         assertEquals(1, result);
     }
 
     @Test
     @Order(4)
-    public void test03SelectByUserPhone() {
-        User user = this.userDao.selectOne(Wrappers.<User>lambdaQuery().eq(User::getUserPhone, "21-439-4780"));
+    public void testSelectByUserPhone() {
+        User user = this.userDao.selectOne(Wrappers.<User>lambdaQuery().eq(User::getPhone, "21-6082-6683"));
         assertNotNull(user);
     }
 
     @Test
     @Order(5)
-    public void test04DeleteUserByUserPhone() {
-        User user = this.userDao.selectOne(Wrappers.<User>lambdaQuery().eq(User::getUserPhone, "21-439-4780"));
+    public void testDeleteUserByUserPhone() {
+        User user = this.userDao.selectOne(Wrappers.<User>lambdaQuery().eq(User::getPhone, "21-6082-6683"));
+        this.userRoleAssociateDao.delete(Wrappers.<UserRoleAssociate>lambdaQuery().eq(UserRoleAssociate::getUserId, user.getId()));
+
         assertNotNull(user);
         int result = this.userDao.deleteById(user);
         assertEquals(1, result);
