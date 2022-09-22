@@ -1,5 +1,6 @@
 package cn.gnaixeuy.redbook.service.impl;
 
+import cn.gnaixeuy.redbook.config.SecurityConfig;
 import cn.gnaixeuy.redbook.dao.RoleDao;
 import cn.gnaixeuy.redbook.dao.UserDao;
 import cn.gnaixeuy.redbook.dao.UserRoleAssociateDao;
@@ -7,17 +8,24 @@ import cn.gnaixeuy.redbook.dto.UserDto;
 import cn.gnaixeuy.redbook.entity.Role;
 import cn.gnaixeuy.redbook.entity.User;
 import cn.gnaixeuy.redbook.entity.common.UserRoleAssociate;
+import cn.gnaixeuy.redbook.enums.ExceptionType;
+import cn.gnaixeuy.redbook.exception.BizException;
 import cn.gnaixeuy.redbook.mapper.UserMapper;
 import cn.gnaixeuy.redbook.service.UserService;
 import cn.gnaixeuy.redbook.vo.UserCreateRequest;
+import com.auth0.jwt.JWT;
+import com.auth0.jwt.algorithms.Algorithm;
 import com.baomidou.mybatisplus.core.toolkit.Wrappers;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.Optional;
 
 /**
@@ -72,6 +80,23 @@ public class UserServiceImpl extends ServiceImpl<UserDao, User> implements UserS
         return this.userMapper.entityToDto(optionalUser.get());
     }
 
+    @Override
+    public Optional<User> userPhoneExist(String phone) {
+        return Optional.of(this.baseMapper
+                .selectOne(this.lambdaQuery()
+                        .eq(User::getPhone, phone)));
+        //TODO 后期国家机制预存
+//        String phoneNumberAttribution = phone.substring(0, 3);
+//        phone = phone.substring(3, 6) + "-" + phone.substring(6, 10) + "-" + phone.substring(10, 14);
+//        switch (phoneNumberAttribution) {
+//            case "+86":
+//                break;
+//            default:
+//                //TODO 其他国家
+//                break;
+//        }
+    }
+
     /**
      * @param phone 手机号码作为用户名
      * @return
@@ -82,6 +107,26 @@ public class UserServiceImpl extends ServiceImpl<UserDao, User> implements UserS
         return this.baseMapper
                 .selectOne(lambdaQuery()
                         .eq(User::getPhone, phone));
+    }
+
+    public User getCurrentUser() {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        // todo
+        //phone 作为UserName
+        return (User) loadUserByUsername(authentication.getName());
+    }
+
+    private String tokenVerifyAndGenerated(User user) {
+        if (!user.isEnabled()) {
+            throw new BizException(ExceptionType.USER_NOT_ENABLED);
+        }
+        if (!user.isAccountNonLocked()) {
+            throw new BizException(ExceptionType.USER_LOCKED);
+        }
+        return JWT.create()
+                .withSubject(user.getUsername())
+                .withExpiresAt(new Date(System.currentTimeMillis() + SecurityConfig.EXPIRATION_TIME))
+                .sign(Algorithm.HMAC512(SecurityConfig.SECRET.getBytes()));
     }
 
 

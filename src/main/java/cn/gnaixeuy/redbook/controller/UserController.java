@@ -5,6 +5,8 @@ import cn.gnaixeuy.redbook.service.UserService;
 import cn.gnaixeuy.redbook.vo.ResponseResult;
 import cn.gnaixeuy.redbook.vo.UserVo;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -37,6 +39,18 @@ public class UserController {
                         .map(this.userMapper::entityToDto)
                         .map(this.userMapper::dtoToVo)
                         .collect(Collectors.toList())
+        );
+    }
+
+    @GetMapping(value = {"/me"})
+//    @ApiOperation(value = "通过请求头保存的token，获取当前用户的信息", httpMethod = "GET")
+    public ResponseResult<UserVo> me() {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        return ResponseResult.success(this.userMapper.dtoToVo(
+                        this.userMapper.entityToDto(
+                                this.userService.getCurrentUser()
+                        )
+                )
         );
     }
 

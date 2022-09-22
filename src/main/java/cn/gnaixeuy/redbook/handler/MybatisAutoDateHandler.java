@@ -22,17 +22,17 @@ public class MybatisAutoDateHandler implements MetaObjectHandler {
 
     @Override
     public void insertFill(MetaObject metaObject) {
-        log.info("开始装填");
-        this.strictInsertFill(metaObject, "createdTime", Date.class, new Date());
-        this.strictInsertFill(metaObject, "updatedTime", Date.class, new Date());
-        log.info("结束装填");
+        log.info("开始装填日期信息");
+        this.strictInsertFill(metaObject, "createdDateTime", Date.class, new Date());
+        this.strictInsertFill(metaObject, "updatedDateTime", Date.class, new Date());
+        log.info("结束装填日期信息");
     }
 
     @Override
     public void updateFill(MetaObject metaObject) {
-        log.info("开始更新");
-        this.strictUpdateFill(metaObject, "updatedTime", Date.class, new Date());
-        this.setFieldValByName("updatedTime", new Date(), metaObject);
-        log.info("结束更新");
+        log.info("开始更新日期信息");
+        this.strictUpdateFill(metaObject, "updatedDateTime", Date.class, new Date());
+        this.setFieldValByName("updatedDateTime", new Date(), metaObject);
+        log.info("结束更新日期信息");
     }
 }
