@@ -19,6 +19,7 @@ import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsConfigurationSource;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 
+
 /**
  * <img src="http://blog.gnaixeuy.cn/wp-content/uploads/2022/09/倒闭.png"/>
  *
@@ -29,16 +30,14 @@ import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
  * @see <a href="https://github.com/GnaixEuy"> GnaixEuy的GitHub </a>
  */
 @Configuration
-@EnableWebSecurity    // 添加 security 过滤器
+@EnableWebSecurity
 @EnableGlobalMethodSecurity(
         prePostEnabled = true,
         securedEnabled = true,
         jsr250Enabled = true
-)// 启用方法级别的权限认证
+)
 public class SecurityConfig {
 
-    public static final String HEADER_STRING = "Authorization";
-    public static final String TOKEN_PREFIX = "Bearer ";
     public static final String SECRET = "RedBook";
     public static final long EXPIRATION_TIME = 864000000;
 

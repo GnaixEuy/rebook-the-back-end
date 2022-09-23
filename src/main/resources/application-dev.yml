@@ -15,12 +15,14 @@ spring:
     user:
       name: test
       password: test
-
 mybatis-plus:
   configuration:
     log-impl: org.apache.ibatis.logging.stdout.StdOutImpl
 fdfs:
   tracker-list: ${FASTDFS_HOST}:22122
+aliyun:
+  accessKeyId: ${ALIYUN_ACCESS_KEY_ID}
+  secret: ${ALIYUN_SECRET}
 
 
 
