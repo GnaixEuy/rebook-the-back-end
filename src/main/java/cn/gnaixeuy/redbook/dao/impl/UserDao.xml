@@ -26,6 +26,9 @@
         <result column="professional" property="professional"/>
         <result column="school" property="school"/>
         <result column="level" property="level"/>
+        <result column="open_id_qq" property="openIdQq"/>
+        <result column="open_id_wechat" property="openIdWechat"/>
+        <result column="open_id_sina" property="openIdWechat"/>
         <collection column="id" property="roles"
                     javaType="java.util.ArrayList"
                     ofType="cn.gnaixeuy.redbook.entity.Role"

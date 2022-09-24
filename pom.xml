@@ -64,6 +64,8 @@
             <artifactId>spring-security-test</artifactId>
             <scope>test</scope>
         </dependency>
+        
+
         <dependency>
             <groupId>com.baomidou</groupId>
             <artifactId>mybatis-plus-boot-starter</artifactId>
@@ -97,7 +99,7 @@
         <dependency>
             <groupId>cn.hutool</groupId>
             <artifactId>hutool-all</artifactId>
-            <version>5.8.6</version>
+            <version>5.8.7</version>
         </dependency>
         <dependency>
             <groupId>io.springfox</groupId>
@@ -107,7 +109,7 @@
         <dependency>
             <groupId>com.aliyun</groupId>
             <artifactId>aliyun-java-sdk-core</artifactId>
-            <version>4.6.1</version> <!-- 注：如提示报错，先升级基础包版，无法解决可联系技术支持 -->
+            <version>4.6.2</version> <!-- 注：如提示报错，先升级基础包版，无法解决可联系技术支持 -->
         </dependency>
         <dependency>
             <groupId>com.aliyun</groupId>

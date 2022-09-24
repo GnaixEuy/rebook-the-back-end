@@ -1,19 +1,28 @@
 package cn.gnaixeuy.redbook.service.impl;
 
 import cn.gnaixeuy.redbook.config.RedisConfig;
+import cn.gnaixeuy.redbook.config.SecurityConfig;
+import cn.gnaixeuy.redbook.dto.TokenByPhoneCreateRequest;
+import cn.gnaixeuy.redbook.entity.User;
 import cn.gnaixeuy.redbook.enums.ExceptionType;
 import cn.gnaixeuy.redbook.enums.RedisDbType;
 import cn.gnaixeuy.redbook.exception.BizException;
 import cn.gnaixeuy.redbook.service.LoginService;
+import cn.gnaixeuy.redbook.service.UserService;
 import cn.gnaixeuy.redbook.utils.ValidateCodeUtils;
 import cn.hutool.core.util.ObjectUtil;
 import cn.hutool.core.util.StrUtil;
+import com.auth0.jwt.JWT;
+import com.auth0.jwt.algorithms.Algorithm;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.redis.core.RedisTemplate;
+import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import java.util.Date;
 import java.util.concurrent.TimeUnit;
 
 /**
@@ -35,10 +44,13 @@ public class LoginServiceImpl implements LoginService {
     private Integer phoneVerificationCodeLiveTime;
 
     private RedisConfig redisConfig;
+    private PasswordEncoder passwordEncoder;
+    private UserService userService;
 
     /**
      * 请求手机验证码
      *
+     * @param phoneNumber 手机号码
      * @return 业务是否成功
      */
     @Override
@@ -63,8 +75,56 @@ public class LoginServiceImpl implements LoginService {
         return true;
     }
 
+    /**
+     * 通过手机方式登录
+     *
+     * @param tokenByPhoneCreateRequest 手机登录方式包装对象 手机号和验证码
+     * @return token
+     */
+    @Override
+    public String createTokenByPhone(TokenByPhoneCreateRequest tokenByPhoneCreateRequest) {
+        String realVerificationCode = String.valueOf(this.redisConfig
+                .getRedisTemplateByDb(RedisDbType.PHONEVERIFICATIONCODE.getCode())
+                .opsForValue()
+                .getAndDelete(tokenByPhoneCreateRequest.getPhoneNumber()));
+        if (realVerificationCode == null || "null".equals(realVerificationCode)) {
+            throw new BizException(ExceptionType.PHONE_VERIFICATION_EXPIRED);
+        }
+        if (!StrUtil.equals(tokenByPhoneCreateRequest.getVerificationCode(), realVerificationCode)) {
+            throw new BizException(ExceptionType.PHONE_VERIFICATION_CODE_ERROR);
+        }
+        UserDetails user = this.userService.loadUserByUsername(tokenByPhoneCreateRequest.getPhoneNumber());
+        if (ObjectUtil.isNull(user)) {
+            throw new BizException(ExceptionType.USER_NOT_FOUND);
+        }
+        return tokenVerifyAndGenerated((User) user);
+    }
+
+    private String tokenVerifyAndGenerated(User user) {
+        if (!user.isEnabled()) {
+            throw new BizException(ExceptionType.USER_NOT_ENABLED);
+        }
+        if (!user.isAccountNonLocked()) {
+            throw new BizException(ExceptionType.USER_LOCKED);
+        }
+        return JWT.create()
+                .withSubject(user.getUsername())
+                .withExpiresAt(new Date(System.currentTimeMillis() + SecurityConfig.EXPIRATION_TIME))
+                .sign(Algorithm.HMAC512(SecurityConfig.SECRET.getBytes()));
+    }
+
     @Autowired
     public void setRedisConfig(RedisConfig redisConfig) {
         this.redisConfig = redisConfig;
+    }
+
+    @Autowired
+    public void setPasswordEncoder(PasswordEncoder passwordEncoder) {
+        this.passwordEncoder = passwordEncoder;
+    }
+
+    @Autowired
+    public void setUserService(UserService userService) {
+        this.userService = userService;
     }
 }

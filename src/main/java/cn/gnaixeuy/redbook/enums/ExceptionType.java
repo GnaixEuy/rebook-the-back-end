@@ -39,6 +39,9 @@ public enum ExceptionType {
     FILE_EMPTY(40403003, "文件为空"),
     FILE_NOT_PERMISSION(40303002, "当前用户无权限修改文件"),
     PHONE_VERIFICATION_EXIT(50083001, "手机验证码已存在"),
+    PHONE_VERIFICATION_CODE_ERROR(50083002, "手机验证码错误"),
+    PHONE_VERIFICATION_EXPIRED(50083003, "手机验证码已过期"),
+
     DATA_IS_EMPTY(50010001, "参数为空");
 
     private final Integer code;

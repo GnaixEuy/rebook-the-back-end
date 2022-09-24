@@ -68,14 +68,14 @@ class UserDaoTest {
     @Test
     @Order(4)
     public void testSelectByUserPhone() {
-        User user = this.userDao.selectOne(Wrappers.<User>lambdaQuery().eq(User::getPhone, "21-6082-6683"));
+        User user = this.userDao.selectOne(Wrappers.<User>lambdaQuery().eq(User::getPhone, "13365917711"));
         assertNotNull(user);
     }
 
     @Test
     @Order(5)
     public void testDeleteUserByUserPhone() {
-        User user = this.userDao.selectOne(Wrappers.<User>lambdaQuery().eq(User::getPhone, "21-6082-6683"));
+        User user = this.userDao.selectOne(Wrappers.<User>lambdaQuery().eq(User::getPhone, "13365917711"));
         this.userRoleAssociateDao.delete(Wrappers.<UserRoleAssociate>lambdaQuery().eq(UserRoleAssociate::getUserId, user.getId()));
 
         assertNotNull(user);

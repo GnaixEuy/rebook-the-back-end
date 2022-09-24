@@ -1,6 +1,5 @@
 package cn.gnaixeuy.redbook.service.impl;
 
-import cn.gnaixeuy.redbook.config.SecurityConfig;
 import cn.gnaixeuy.redbook.dao.RoleDao;
 import cn.gnaixeuy.redbook.dao.UserDao;
 import cn.gnaixeuy.redbook.dao.UserRoleAssociateDao;
@@ -8,13 +7,9 @@ import cn.gnaixeuy.redbook.dto.UserDto;
 import cn.gnaixeuy.redbook.entity.Role;
 import cn.gnaixeuy.redbook.entity.User;
 import cn.gnaixeuy.redbook.entity.common.UserRoleAssociate;
-import cn.gnaixeuy.redbook.enums.ExceptionType;
-import cn.gnaixeuy.redbook.exception.BizException;
 import cn.gnaixeuy.redbook.mapper.UserMapper;
 import cn.gnaixeuy.redbook.service.UserService;
 import cn.gnaixeuy.redbook.vo.UserCreateRequest;
-import com.auth0.jwt.JWT;
-import com.auth0.jwt.algorithms.Algorithm;
 import com.baomidou.mybatisplus.core.toolkit.Wrappers;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -25,7 +20,6 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.Optional;
 
 /**
@@ -104,9 +98,7 @@ public class UserServiceImpl extends ServiceImpl<UserDao, User> implements UserS
      */
     @Override
     public UserDetails loadUserByUsername(String phone) throws UsernameNotFoundException {
-        return this.baseMapper
-                .selectOne(lambdaQuery()
-                        .eq(User::getPhone, phone));
+        return this.baseMapper.selectOne(Wrappers.<User>lambdaQuery().eq(User::getPhone, phone));
     }
 
     public User getCurrentUser() {
@@ -114,19 +106,6 @@ public class UserServiceImpl extends ServiceImpl<UserDao, User> implements UserS
         // todo
         //phone 作为UserName
         return (User) loadUserByUsername(authentication.getName());
-    }
-
-    private String tokenVerifyAndGenerated(User user) {
-        if (!user.isEnabled()) {
-            throw new BizException(ExceptionType.USER_NOT_ENABLED);
-        }
-        if (!user.isAccountNonLocked()) {
-            throw new BizException(ExceptionType.USER_LOCKED);
-        }
-        return JWT.create()
-                .withSubject(user.getUsername())
-                .withExpiresAt(new Date(System.currentTimeMillis() + SecurityConfig.EXPIRATION_TIME))
-                .sign(Algorithm.HMAC512(SecurityConfig.SECRET.getBytes()));
     }
 
 

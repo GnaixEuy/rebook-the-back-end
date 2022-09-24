@@ -45,4 +45,4 @@ fdfs:
 phone:
   verification:
     length: 6
-    live: 120
+    live: 300

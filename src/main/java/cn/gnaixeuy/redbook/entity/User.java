@@ -77,6 +77,13 @@ public class User implements UserDetails {
     private String school;
     @TableField
     private Integer level;
+    @TableField
+    private String openIdQq;
+    @TableField
+    private String openIdWechat;
+    @TableField
+    private String openIdSina;
+
     @TableField(exist = false)
     private List<Role> roles;
 

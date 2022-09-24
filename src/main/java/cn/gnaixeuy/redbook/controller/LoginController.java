@@ -1,12 +1,10 @@
 package cn.gnaixeuy.redbook.controller;
 
+import cn.gnaixeuy.redbook.dto.TokenByPhoneCreateRequest;
 import cn.gnaixeuy.redbook.service.LoginService;
 import cn.gnaixeuy.redbook.vo.ResponseResult;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 /**
  * <img src="http://blog.gnaixeuy.cn/wp-content/uploads/2022/09/倒闭.png"/>
@@ -31,9 +29,14 @@ public class LoginController {
         return ResponseResult.success("短信发送成功");
     }
 
+    @PostMapping(value = {"/phoneNumber"})
+    public ResponseResult<String> getTokenByPhone(@RequestBody TokenByPhoneCreateRequest tokenByPhoneCreateRequest) {
+        return ResponseResult.success(this.loginService.createTokenByPhone(tokenByPhoneCreateRequest));
+    }
+
     @Autowired
     public void setLoginService(LoginService loginService) {
         this.loginService = loginService;
     }
-    
+
 }
