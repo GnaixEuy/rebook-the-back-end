@@ -37,7 +37,9 @@ public enum ExceptionType {
     FILE_NOT_FOUND(40403001, "文件不存在"),
     FILE_UPLOAD_ERROR(40403002, "文件上传失败"),
     FILE_EMPTY(40403003, "文件为空"),
-    FILE_NOT_PERMISSION(40303002, "当前用户无权限修改文件");
+    FILE_NOT_PERMISSION(40303002, "当前用户无权限修改文件"),
+    PHONE_VERIFICATION_EXIT(50083001, "手机验证码已存在"),
+    DATA_IS_EMPTY(50010001, "参数为空");
 
     private final Integer code;
     private final String message;

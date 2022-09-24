@@ -8,6 +8,7 @@ import com.aliyun.tea.TeaException;
 import com.aliyun.teaopenapi.models.Config;
 import com.aliyun.teautil.Common;
 import com.aliyun.teautil.models.RuntimeOptions;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
@@ -22,6 +23,7 @@ import javax.annotation.PostConstruct;
  * @date 2022/9/23
  * @see <a href="https://github.com/GnaixEuy"> GnaixEuy的GitHub </a>
  */
+@Slf4j
 @Component
 public class SmsUtils {
 
@@ -52,12 +54,11 @@ public class SmsUtils {
         try {
             SendSmsResponse sendSmsResponse = client.sendSmsWithOptions(sendSmsRequest, runtime);
             SendSmsResponseBody body = sendSmsResponse.getBody();
-            System.out.println(body.getMessage());
         } catch (TeaException error) {
-            System.out.println(Common.assertAsString(error.message));
+            SmsUtils.log.error(Common.assertAsString(error.message));
         } catch (Exception error) {
             TeaException error1 = new TeaException(error.getMessage(), error);
-            System.out.println(Common.assertAsString(error1.message));
+            SmsUtils.log.error(Common.assertAsString(error1.message));
         }
     }
 
