@@ -22,6 +22,8 @@ import java.util.Date;
 @NoArgsConstructor
 public class UserVo {
 
+    private String id;
+
     private String email;
 
     private String nickname;
@@ -53,7 +55,7 @@ public class UserVo {
     private String professional;
 
     private String school;
-    
+
     private Integer level;
 
 }

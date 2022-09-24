@@ -3,13 +3,16 @@ package cn.gnaixeuy.redbook.service.impl;
 import cn.gnaixeuy.redbook.config.RedisConfig;
 import cn.gnaixeuy.redbook.config.SecurityConfig;
 import cn.gnaixeuy.redbook.dto.TokenByPhoneCreateRequest;
+import cn.gnaixeuy.redbook.dto.UserDto;
 import cn.gnaixeuy.redbook.entity.User;
 import cn.gnaixeuy.redbook.enums.ExceptionType;
 import cn.gnaixeuy.redbook.enums.RedisDbType;
 import cn.gnaixeuy.redbook.exception.BizException;
+import cn.gnaixeuy.redbook.mapper.UserMapper;
 import cn.gnaixeuy.redbook.service.LoginService;
 import cn.gnaixeuy.redbook.service.UserService;
 import cn.gnaixeuy.redbook.utils.ValidateCodeUtils;
+import cn.gnaixeuy.redbook.vo.UserCreateRequest;
 import cn.hutool.core.util.ObjectUtil;
 import cn.hutool.core.util.StrUtil;
 import com.auth0.jwt.JWT;
@@ -46,6 +49,7 @@ public class LoginServiceImpl implements LoginService {
     private RedisConfig redisConfig;
     private PasswordEncoder passwordEncoder;
     private UserService userService;
+    private UserMapper userMapper;
 
     /**
      * 请求手机验证码
@@ -95,8 +99,14 @@ public class LoginServiceImpl implements LoginService {
         }
         UserDetails user = this.userService.loadUserByUsername(tokenByPhoneCreateRequest.getPhoneNumber());
         if (ObjectUtil.isNull(user)) {
-            throw new BizException(ExceptionType.USER_NOT_FOUND);
+            UserDto userDto = this.userService.addUser(new UserCreateRequest() {{
+                this.setPhone(tokenByPhoneCreateRequest.getPhoneNumber());
+                this.setEnabled(true);
+                this.setLocked(false);
+            }});
+            user = this.userMapper.dto2Entity(userDto);
         }
+
         return tokenVerifyAndGenerated((User) user);
     }
 
@@ -126,5 +136,10 @@ public class LoginServiceImpl implements LoginService {
     @Autowired
     public void setUserService(UserService userService) {
         this.userService = userService;
+    }
+
+    @Autowired
+    public void setUserMapper(UserMapper userMapper) {
+        this.userMapper = userMapper;
     }
 }

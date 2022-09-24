@@ -21,9 +21,9 @@ import lombok.NoArgsConstructor;
 @TableName(value = "user_role_associate")
 public class UserRoleAssociate {
 
-    @TableField
+    @TableField(value = "role_id")
     private Integer roleId;
-    @TableField
+    @TableField(value = "user_id")
     private String userId;
 
 }

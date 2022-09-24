@@ -7,6 +7,8 @@ import cn.gnaixeuy.redbook.dto.UserDto;
 import cn.gnaixeuy.redbook.entity.Role;
 import cn.gnaixeuy.redbook.entity.User;
 import cn.gnaixeuy.redbook.entity.common.UserRoleAssociate;
+import cn.gnaixeuy.redbook.enums.ExceptionType;
+import cn.gnaixeuy.redbook.exception.BizException;
 import cn.gnaixeuy.redbook.mapper.UserMapper;
 import cn.gnaixeuy.redbook.service.UserService;
 import cn.gnaixeuy.redbook.vo.UserCreateRequest;
@@ -18,8 +20,10 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.Optional;
 
 /**
@@ -48,30 +52,33 @@ public class UserServiceImpl extends ServiceImpl<UserDao, User> implements UserS
      * @return 返回是否新增数据对象vo
      */
     @Override
+    @Transactional
     public UserDto addUser(UserCreateRequest userCreateRequest) {
-        User user = this.userMapper.userCreateRequstToEntity(userCreateRequest);
+        User user = this.userMapper.userCreateRequst2Entity(userCreateRequest);
+        user.setCreatedDateTime(new Date());
         int result = this.baseMapper.insert(user);
         if (result != 1) {
-            //TODO throw 创建 exception
+            throw new BizException(ExceptionType.USER_CREATE_EXCEPTION);
         }
         Optional<User> optionalUser = Optional.of(
                 this.baseMapper
-                        .selectOne(lambdaQuery()
+                        .selectOne(Wrappers
+                                .<User>lambdaQuery()
                                 .eq(User::getId, user.getId())));
-        if (optionalUser.isEmpty()) {
-            //TODO throw 查询 exception
+        if (optionalUser.get() == null) {
+            throw new BizException(ExceptionType.USER_NOT_FOUND);
         }
         //默认新用户赋予用户权限
         int authorizeResult = this.userRoleAssociateDao.insert(new UserRoleAssociate(1, user.getId()));
         if (authorizeResult != 1) {
-            //TODO throw 赋权 exception
+            throw new BizException(ExceptionType.AUTHORIZATION_EXCEPTION);
         }
         //填充默认用户权限信息
         Role role = this.roleDao.selectOne(Wrappers.<Role>lambdaQuery().eq(Role::getId, 1));
         ArrayList<Role> roles = new ArrayList<>();
         roles.add(role);
         optionalUser.get().setRoles(roles);
-        return this.userMapper.entityToDto(optionalUser.get());
+        return this.userMapper.entity2Dto(optionalUser.get());
     }
 
     @Override
@@ -103,9 +110,7 @@ public class UserServiceImpl extends ServiceImpl<UserDao, User> implements UserS
 
     public User getCurrentUser() {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        // todo
-        //phone 作为UserName
-        return (User) loadUserByUsername(authentication.getName());
+        return (User) this.loadUserByUsername(authentication.getName());
     }
 
 

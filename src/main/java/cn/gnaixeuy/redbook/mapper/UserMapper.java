@@ -27,16 +27,23 @@ public interface UserMapper {
     @Mappings(value = {
             @Mapping(target = "birthday", source = "birthday", dateFormat = "yyyy-MM-dd HH:mm:ss"),
     })
-    UserDto entityToDto(User user);
+    UserDto entity2Dto(User user);
 
     @Mappings(value = {
             @Mapping(target = "birthday", source = "birthday", dateFormat = "yyyy-MM-dd HH:mm:ss"),
             @Mapping(target = "profilePhotoImage", source = "profilePhoto"),
             @Mapping(target = "backgroundImage", source = "backgroundPhoto")
     })
-    UserVo dtoToVo(UserDto userDto);
+    UserVo dto2Vo(UserDto userDto);
+
+    @Mappings(value = {
+            @Mapping(target = "birthday", source = "birthday", dateFormat = "yyyy-MM-dd HH:mm:ss"),
+            @Mapping(target = "enabled", source = "enabled"),
+            @Mapping(target = "locked", source = "locked")
+    })
+    User dto2Entity(UserDto userDto);
 
 
-    User userCreateRequstToEntity(UserCreateRequest userCreateRequest);
+    User userCreateRequst2Entity(UserCreateRequest userCreateRequest);
 
 }

@@ -4,13 +4,13 @@ import cn.gnaixeuy.redbook.mapper.UserMapper;
 import cn.gnaixeuy.redbook.service.UserService;
 import cn.gnaixeuy.redbook.vo.ResponseResult;
 import cn.gnaixeuy.redbook.vo.UserVo;
+import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import javax.annotation.security.RolesAllowed;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -36,18 +36,18 @@ public class UserController {
                 this.userService
                         .list()
                         .stream()
-                        .map(this.userMapper::entityToDto)
-                        .map(this.userMapper::dtoToVo)
+                        .map(this.userMapper::entity2Dto)
+                        .map(this.userMapper::dto2Vo)
                         .collect(Collectors.toList())
         );
     }
 
     @GetMapping(value = {"/me"})
-//    @ApiOperation(value = "通过请求头保存的token，获取当前用户的信息", httpMethod = "GET")
+    @RolesAllowed(value = {"ROLE_USER"})
+    @ApiOperation(value = "通过请求头保存的token，获取当前用户的信息", httpMethod = "GET")
     public ResponseResult<UserVo> me() {
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        return ResponseResult.success(this.userMapper.dtoToVo(
-                        this.userMapper.entityToDto(
+        return ResponseResult.success(this.userMapper.dto2Vo(
+                        this.userMapper.entity2Dto(
                                 this.userService.getCurrentUser()
                         )
                 )
@@ -64,4 +64,5 @@ public class UserController {
     public void setUserMapper(UserMapper userMapper) {
         this.userMapper = userMapper;
     }
+    
 }

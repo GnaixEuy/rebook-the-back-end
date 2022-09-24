@@ -63,9 +63,9 @@ COMMIT;
 
 BEGIN;
 INSERT INTO `role` (`id`, `name`, `title`, `created_date_time`, `updated_date_time`)
-VALUES (1, '系统管理员', '系统管理员', '2021-01-17 11:20:59', '2014-05-14 01:01:40');
+VALUES (1, 'ROLE_USER', '会员', '2021-01-17 11:20:59', '2014-05-14 01:01:40');
 INSERT INTO `role` (`id`, `name`, `title`, `created_date_time`, `updated_date_time`)
-VALUES (2, '会员', '会员', '2021-01-17 11:20:59', '2014-05-14 01:01:40');
+VALUES (2, 'ROLE_ADMIN', '系统管理员', '2021-01-17 11:20:59', '2014-05-14 01:01:40');
 COMMIT;
 
 BEGIN;

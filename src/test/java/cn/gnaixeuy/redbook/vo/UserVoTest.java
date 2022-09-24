@@ -43,7 +43,7 @@ class UserDtoTest {
         user.setLevel(1);
         user.setSchool("jmu");
         user.setProfessional("student");
-        UserDto userDto = this.userMapper.entityToDto(user);
+        UserDto userDto = this.userMapper.entity2Dto(user);
         System.out.println(userDto);
     }
 
