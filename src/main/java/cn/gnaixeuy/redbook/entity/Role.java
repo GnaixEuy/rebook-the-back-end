@@ -10,6 +10,7 @@ import lombok.NoArgsConstructor;
 import java.util.Date;
 
 /**
+ * 角色
  * <img src="http://blog.gnaixeuy.cn/wp-content/uploads/2022/09/倒闭.png"/>
  *
  * <p>项目： redbook </p>
@@ -24,14 +25,29 @@ import java.util.Date;
 @TableName(value = "role", resultMap = "roleResultMap")
 public class Role {
 
+    /**
+     * id
+     */
     @TableId
     private Integer id;
+    /**
+     * 名字
+     */
     @TableField
     private String name;
+    /**
+     * 标题
+     */
     @TableField
     private String title;
+    /**
+     * 创建日期时间
+     */
     @TableField
     private Date createdDateTime;
+    /**
+     * 更新日期时间
+     */
     @TableField
     private Date updatedDateTime;
 

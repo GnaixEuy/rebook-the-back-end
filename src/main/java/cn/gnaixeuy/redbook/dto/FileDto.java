@@ -1,28 +1,28 @@
-package cn.gnaixeuy.redbook.entity;
+package cn.gnaixeuy.redbook.dto;
 
-import com.baomidou.mybatisplus.annotation.TableName;
+import cn.gnaixeuy.redbook.entity.User;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import java.util.Date;
 
-
 /**
  * <img src="http://blog.gnaixeuy.cn/wp-content/uploads/2022/09/倒闭.png"/>
+ *
+ *
+ *
  * <p>项目： redbook </p>
  *
  * @author GnaixEuy
  * @version 1.0.0
- * @date 2022/09/26
+ * @date 2022/9/29
  * @see <a href="https://github.com/GnaixEuy"> GnaixEuy的GitHub </a>
  */
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-@TableName(value = "file")
-public class File {
-
+public class FileDto {
     /**
      * 文件标识
      */
@@ -46,11 +46,9 @@ public class File {
     /**
      * 上传者
      */
-    private String uploaderId;
+    private User uploader;
     /**
      * 上传日期时间
      */
     private Date uploadDateTime;
-
-
 }
