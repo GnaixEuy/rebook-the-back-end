@@ -3,6 +3,7 @@ package cn.gnaixeuy.redbook.service.impl;
 import cn.gnaixeuy.redbook.dao.RoleDao;
 import cn.gnaixeuy.redbook.dao.UserDao;
 import cn.gnaixeuy.redbook.dao.UserRoleAssociateDao;
+import cn.gnaixeuy.redbook.dto.FileDto;
 import cn.gnaixeuy.redbook.dto.UserDto;
 import cn.gnaixeuy.redbook.entity.Role;
 import cn.gnaixeuy.redbook.entity.User;
@@ -10,6 +11,7 @@ import cn.gnaixeuy.redbook.entity.common.UserRoleAssociate;
 import cn.gnaixeuy.redbook.enums.ExceptionType;
 import cn.gnaixeuy.redbook.exception.BizException;
 import cn.gnaixeuy.redbook.mapper.UserMapper;
+import cn.gnaixeuy.redbook.service.FileService;
 import cn.gnaixeuy.redbook.service.UserService;
 import cn.gnaixeuy.redbook.vo.UserCreateRequest;
 import com.baomidou.mybatisplus.core.toolkit.Wrappers;
@@ -21,6 +23,7 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.util.ArrayList;
 import java.util.Date;
@@ -44,6 +47,7 @@ public class UserServiceImpl extends ServiceImpl<UserDao, User> implements UserS
     private UserMapper userMapper;
     private UserRoleAssociateDao userRoleAssociateDao;
     private RoleDao roleDao;
+    private FileService fileService;
 
     /**
      * 新增用户业务
@@ -113,6 +117,41 @@ public class UserServiceImpl extends ServiceImpl<UserDao, User> implements UserS
         return (User) this.loadUserByUsername(authentication.getName());
     }
 
+    /**
+     * 配置文件上传照片
+     *
+     * @param multipartFile 用户头像文件
+     * @return {@link UserDto}
+     */
+    @Override
+    public UserDto profilePhotoUpload(MultipartFile multipartFile) {
+        FileDto fileDto = this.fileService.saveFile(multipartFile, this.getCurrentUser());
+        User uploader = fileDto.getUploader();
+        int updateResult = this.baseMapper.updateUserPhoto(uploader.getId(), fileDto.getId(), null);
+        if (updateResult != 1) {
+            throw new BizException(ExceptionType.USER_UPDATE_ERROR);
+        } else {
+            return this.userMapper.entity2Dto(this.baseMapper.selectById(uploader.getId()));
+        }
+    }
+
+    /**
+     * 用户背景上传照片
+     *
+     * @param multipartFile 用户背景文件
+     * @return {@link UserDto}
+     */
+    @Override
+    public UserDto backgroundPhotoUpload(MultipartFile multipartFile) {
+        FileDto fileDto = this.fileService.saveFile(multipartFile, this.getCurrentUser());
+        User uploader = fileDto.getUploader();
+        int updateResult = this.baseMapper.updateUserPhoto(uploader.getId(), null, fileDto.getId());
+        if (updateResult != 1) {
+            throw new BizException(ExceptionType.USER_UPDATE_ERROR);
+        } else {
+            return this.userMapper.entity2Dto(this.baseMapper.selectById(uploader.getId()));
+        }
+    }
 
     @Autowired
     public void setUserMapper(UserMapper userMapper) {
@@ -127,5 +166,10 @@ public class UserServiceImpl extends ServiceImpl<UserDao, User> implements UserS
     @Autowired
     public void setRoleDao(RoleDao roleDao) {
         this.roleDao = roleDao;
+    }
+
+    @Autowired
+    public void setFileService(FileService fileService) {
+        this.fileService = fileService;
     }
 }

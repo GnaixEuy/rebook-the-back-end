@@ -1,14 +1,14 @@
 package cn.gnaixeuy.redbook.controller;
 
+import cn.gnaixeuy.redbook.dto.UserDto;
 import cn.gnaixeuy.redbook.mapper.UserMapper;
 import cn.gnaixeuy.redbook.service.UserService;
 import cn.gnaixeuy.redbook.vo.ResponseResult;
 import cn.gnaixeuy.redbook.vo.UserVo;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 import javax.annotation.security.RolesAllowed;
 import java.util.List;
@@ -54,6 +54,18 @@ public class UserController {
         );
     }
 
+    @PostMapping(value = {"/profilePhoto"})
+    public ResponseResult<UserVo> profilePhotoUpload(@RequestParam("multipartFile") MultipartFile multipartFile) {
+        UserDto userDto = this.userService.profilePhotoUpload(multipartFile);
+        return ResponseResult.success(this.userMapper.dto2Vo(userDto));
+    }
+
+    @PostMapping(value = {"/backgroundPhoto"})
+    public ResponseResult<UserVo> backgroundPhotoUpload(@RequestParam("multipartFile") MultipartFile multipartFile) {
+        UserDto userDto = this.userService.backgroundPhotoUpload(multipartFile);
+        return ResponseResult.success(this.userMapper.dto2Vo(userDto));
+    }
+
 
     @Autowired
     public void setUserService(UserService userService) {
@@ -64,5 +76,5 @@ public class UserController {
     public void setUserMapper(UserMapper userMapper) {
         this.userMapper = userMapper;
     }
-    
+
 }

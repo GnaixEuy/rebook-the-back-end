@@ -23,6 +23,7 @@ import java.util.Date;
 @AllArgsConstructor
 @NoArgsConstructor
 public class FileDto {
+
     /**
      * 文件标识
      */
@@ -51,4 +52,5 @@ public class FileDto {
      * 上传日期时间
      */
     private Date uploadDateTime;
+    
 }

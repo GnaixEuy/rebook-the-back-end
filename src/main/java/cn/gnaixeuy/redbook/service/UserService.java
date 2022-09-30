@@ -6,6 +6,7 @@ import cn.gnaixeuy.redbook.vo.UserCreateRequest;
 import com.baomidou.mybatisplus.extension.service.IService;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.util.Optional;
 
@@ -34,4 +35,20 @@ public interface UserService extends IService<User>, UserDetailsService {
 
     User getCurrentUser();
 
+
+    /**
+     * 用户头像上传照片
+     *
+     * @param multipartFile 用户头像文件
+     * @return {@link UserDto}
+     */
+    UserDto profilePhotoUpload(MultipartFile multipartFile);
+
+    /**
+     * 用户背景上传照片
+     *
+     * @param multipartFile 用户背景文件
+     * @return {@link UserDto}
+     */
+    UserDto backgroundPhotoUpload(MultipartFile multipartFile);
 }

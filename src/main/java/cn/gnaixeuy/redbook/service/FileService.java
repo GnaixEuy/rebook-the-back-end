@@ -2,7 +2,9 @@ package cn.gnaixeuy.redbook.service;
 
 import cn.gnaixeuy.redbook.dto.FileDto;
 import cn.gnaixeuy.redbook.entity.File;
+import cn.gnaixeuy.redbook.entity.User;
 import com.baomidou.mybatisplus.extension.service.IService;
+import org.springframework.web.multipart.MultipartFile;
 
 /**
  * 文件服务
@@ -22,9 +24,11 @@ public interface FileService extends IService<File> {
     /**
      * 保存文件
      *
-     * @param fileDto 文件dto
+     * @param multipartFile 文件
+     * @param uploader      上传者
      * @return boolean
      */
-    FileDto saveFile(FileDto fileDto);
+    FileDto saveFile(MultipartFile multipartFile, User uploader);
+
 
 }

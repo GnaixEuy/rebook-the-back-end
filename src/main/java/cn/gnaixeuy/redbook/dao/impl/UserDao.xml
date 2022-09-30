@@ -33,7 +33,34 @@
                     javaType="java.util.ArrayList"
                     ofType="cn.gnaixeuy.redbook.entity.Role"
                     select="selectUserRoleByUserId"/>
+        <collection column="profile_photo_id" property="profilePhoto"
+                    javaType="cn.gnaixeuy.redbook.entity.File"
+                    select="selectProfilePhotoByProfilePhotoId"/>
+        <collection column="background_photo_id" property="backgroundPhoto"
+                    javaType="cn.gnaixeuy.redbook.entity.File"
+                    select="selectBackgroundPhotoByBackgroundPhoto"/>
     </resultMap>
+    <update id="updateUserPhoto">
+        <if test="id != null">
+            UPDATE redbook.user SET
+            <choose>
+                <when test="profilePhotoId != null and backgroundPhotoId != null">
+                    redbook.user.profile_photo_id = #{profilePhotoId},
+                    redbook.user.background_photo_id = #{backgroundPhotoId}
+                    WHERE id = #{id}
+                </when>
+                <when test="profilePhotoId != null and backgroundPhotoId == null">
+                    redbook.user.profile_photo_id = #{profilePhotoId}
+                    WHERE id = #{id}
+                </when>
+                <otherwise>
+                    redbook.user.background_photo_id = #{backgroundPhotoId}
+                    WHERE id = #{id}
+                </otherwise>
+            </choose>
+
+        </if>
+    </update>
 
     <select id="selectUserRoleByUserId" resultType="cn.gnaixeuy.redbook.entity.Role">
         SELECT *
@@ -41,6 +68,18 @@
         WHERE id IN (SELECT role_id
                      FROM redbook.user_role_associate
                      WHERE user_id = #{id})
+    </select>
+
+    <select id="selectProfilePhotoByProfilePhotoId" resultType="cn.gnaixeuy.redbook.entity.File">
+        SELECT *
+        FROM redbook.file
+        WHERE id = #{profile_photo_id}
+    </select>
+
+    <select id="selectBackgroundPhotoByBackgroundPhoto" resultType="cn.gnaixeuy.redbook.entity.File">
+        SELECT *
+        FROM redbook.file
+        WHERE id = #{background_photo_id}
     </select>
 
 </mapper>
