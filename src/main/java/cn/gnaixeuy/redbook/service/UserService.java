@@ -8,8 +8,6 @@ import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
-import java.util.Optional;
-
 /**
  * <img src="http://blog.gnaixeuy.cn/wp-content/uploads/2022/09/倒闭.png"/>
  *
@@ -29,9 +27,6 @@ public interface UserService extends IService<User>, UserDetailsService {
      * @return 返回是否新增数据对象vo
      */
     UserDto addUser(UserCreateRequest userCreateRequest);
-
-    Optional<User> userPhoneExist(String phone);
-
 
     User getCurrentUser();
 

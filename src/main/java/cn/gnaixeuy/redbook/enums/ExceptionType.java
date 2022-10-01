@@ -44,6 +44,8 @@ public enum ExceptionType {
     PHONE_VERIFICATION_CODE_ERROR(50083002, "手机验证码错误"),
     PHONE_VERIFICATION_EXPIRED(50083003, "手机验证码已过期"),
 
+    NOTE_CREATE_EXCEPTION(500710001, "笔记创建失败"),
+
     DATA_IS_EMPTY(50010001, "参数为空");
 
     private final Integer code;

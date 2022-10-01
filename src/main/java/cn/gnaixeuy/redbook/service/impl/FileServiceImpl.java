@@ -8,9 +8,11 @@ import cn.gnaixeuy.redbook.enums.ExceptionType;
 import cn.gnaixeuy.redbook.exception.BizException;
 import cn.gnaixeuy.redbook.mapper.FileMapper;
 import cn.gnaixeuy.redbook.service.FileService;
+import cn.gnaixeuy.redbook.service.UserService;
 import cn.gnaixeuy.redbook.utils.FastDfsUtil;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
@@ -31,6 +33,8 @@ public class FileServiceImpl extends ServiceImpl<FileDao, File> implements FileS
 
     private FileMapper fileMapper;
     private FastDfsUtil fastDfsUtil;
+
+    private UserService userService;
 
 
     /**
@@ -74,6 +78,20 @@ public class FileServiceImpl extends ServiceImpl<FileDao, File> implements FileS
         }
     }
 
+    /**
+     * 通过file id 获取file详细信息 包括上传者
+     *
+     * @param fileId 文件id
+     * @return fileDTO
+     */
+    @Override
+    public FileDto getFileInfoByFileId(String fileId) {
+        File file = this.baseMapper.selectById(fileId);
+        FileDto fileDto = this.fileMapper.entity2Dto(file);
+        fileDto.setUploader(this.userService.getById(file.getUploaderId()));
+        return fileDto;
+    }
+
 
     @Autowired
     public void setFileMapper(FileMapper fileMapper) {
@@ -85,5 +103,9 @@ public class FileServiceImpl extends ServiceImpl<FileDao, File> implements FileS
         this.fastDfsUtil = fastDfsUtil;
     }
 
-
+    @Lazy
+    @Autowired
+    public void setUserService(UserService userService) {
+        this.userService = userService;
+    }
 }

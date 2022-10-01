@@ -40,7 +40,6 @@ public class SwaggerConfig {
                 .build();
     }
 
-
     private SecurityContext securityContext() {
         return SecurityContext.builder().securityReferences(defaultAuth()).build();
     }

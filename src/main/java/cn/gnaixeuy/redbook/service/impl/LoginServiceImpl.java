@@ -106,7 +106,6 @@ public class LoginServiceImpl implements LoginService {
             }});
             user = this.userMapper.dto2Entity(userDto);
         }
-
         return tokenVerifyAndGenerated((User) user);
     }
 

@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="cn.gnaixeuy.redbook.dao.NoteDao">
+
+    <resultMap id="noteResultMap" type="cn.gnaixeuy.redbook.entity.Note">
+        <id column="id" property="id"/>
+        <result column="description" property="description"/>
+        <result column="`like`" property="like"/>
+        <result column="collection" property="collection"/>
+        <result column="created_date_time" property="createdDateTime"/>
+        <result column="updated_date_time" property="updatedDateTime"/>
+        <result column="watch" property="watch"/>
+        <result column="author_id" property="authorId"/>
+        <collection column="id" property="resources" select="selectNoteResources" javaType="java.util.List"
+                    ofType="cn.gnaixeuy.redbook.entity.File"/>
+    </resultMap>
+
+    <!--TODO 等待File ResultMap改造-->
+    <select id="selectNoteResources" resultType="cn.gnaixeuy.redbook.entity.File">
+        SELECT *
+        FROM redbook.file
+        WHERE file.id In (SELECT id
+                          FROM redbook.note_resources
+                          WHERE note_resources.note_id = #{id})
+    </select>
+
+</mapper>

@@ -19,7 +19,11 @@ public class KsuidIdentifierGenerator implements IdentifierGenerator {
 
     @Override
     public Number nextId(Object entity) {
-        return new DefaultIdentifierGenerator().nextId(entity);
+        Long id = new DefaultIdentifierGenerator().nextId(entity);
+        if (id < 0) {
+            return -id;
+        }
+        return id;
     }
 
     @Override

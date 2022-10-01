@@ -25,6 +25,7 @@ public interface UserDao extends BaseMapper<User> {
      * @param backgroundPhotoId 背景图id
      * @return int
      */
+
     int updateUserPhoto(String id, String profilePhotoId, String backgroundPhotoId);
 
 }

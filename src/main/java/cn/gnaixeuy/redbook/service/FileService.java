@@ -30,5 +30,12 @@ public interface FileService extends IService<File> {
      */
     FileDto saveFile(MultipartFile multipartFile, User uploader);
 
+    /**
+     * 通过file id 获取file详细信息 包括上传者
+     *
+     * @param fileId 文件id
+     * @return fileDTO
+     */
+    FileDto getFileInfoByFileId(String fileId);
 
 }

@@ -85,23 +85,6 @@ public class UserServiceImpl extends ServiceImpl<UserDao, User> implements UserS
         return this.userMapper.entity2Dto(optionalUser.get());
     }
 
-    @Override
-    public Optional<User> userPhoneExist(String phone) {
-        return Optional.of(this.baseMapper
-                .selectOne(this.lambdaQuery()
-                        .eq(User::getPhone, phone)));
-        //TODO 后期国家机制预存
-//        String phoneNumberAttribution = phone.substring(0, 3);
-//        phone = phone.substring(3, 6) + "-" + phone.substring(6, 10) + "-" + phone.substring(10, 14);
-//        switch (phoneNumberAttribution) {
-//            case "+86":
-//                break;
-//            default:
-//                //TODO 其他国家
-//                break;
-//        }
-    }
-
     /**
      * @param phone 手机号码作为用户名
      * @return
