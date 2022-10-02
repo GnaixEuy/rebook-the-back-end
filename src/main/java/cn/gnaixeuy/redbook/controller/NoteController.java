@@ -1,5 +1,7 @@
 package cn.gnaixeuy.redbook.controller;
 
+import cn.gnaixeuy.redbook.enums.ExceptionType;
+import cn.gnaixeuy.redbook.exception.BizException;
 import cn.gnaixeuy.redbook.mapper.NoteMapper;
 import cn.gnaixeuy.redbook.service.NoteService;
 import cn.gnaixeuy.redbook.vo.NoteCreateRequest;
@@ -7,12 +9,11 @@ import cn.gnaixeuy.redbook.vo.NoteVo;
 import cn.gnaixeuy.redbook.vo.ResponseResult;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.validation.annotation.Validated;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.security.RolesAllowed;
+import java.util.List;
+import java.util.stream.Collectors;
 
 /**
  * <img src="http://blog.gnaixeuy.cn/wp-content/uploads/2022/09/倒闭.png"/>
@@ -45,6 +46,45 @@ public class NoteController {
                         )
         );
     }
+
+    //TODO BUG 无餐默认值错误
+    @GetMapping(value = {"/like/{noteId}"})
+    public ResponseResult<String> updateNoteLikeStatus(@PathVariable Integer noteId, boolean isLike) {
+        //TODO 通知业务
+        if (!this.noteService.updateUserNoteIsLike(noteId, isLike)) {
+            throw new BizException(ExceptionType.NOTE_LIKE_EXCEPTION);
+        }
+        return ResponseResult.success("更新成功");
+    }
+
+    //TODO BUG 无餐默认值错误
+    @GetMapping(value = {"/collect/{noteId}"})
+    public ResponseResult<String> updateNoteCollectedStatus(@PathVariable Integer noteId, boolean isCollected) {
+        //TODO 通知业务
+        if (!this.noteService.updateUserNoteIsCollected(noteId, isCollected)) {
+            throw new BizException(ExceptionType.NOTE_COLLECT_EXCEPTION);
+        }
+        return ResponseResult.success("更新成功");
+    }
+
+    @GetMapping(value = {"/collectedNotes"})
+    public ResponseResult<List<NoteVo>> getUserCollectedNotes() {
+        return ResponseResult.success(
+                this.noteService.userCollectedNotes()
+                        .stream()
+                        .map(this.noteMapper::dto2Vo)
+                        .collect(Collectors.toList()));
+    }
+
+    @GetMapping(value = {"/likeNotes"})
+    public ResponseResult<List<NoteVo>> getUserLikeNotes() {
+        return ResponseResult.success(
+                this.noteService.userLikeNotes()
+                        .stream()
+                        .map(this.noteMapper::dto2Vo)
+                        .collect(Collectors.toList()));
+    }
+
 
     @Autowired
     public void setNoteService(NoteService noteService) {

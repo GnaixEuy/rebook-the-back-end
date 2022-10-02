@@ -45,6 +45,8 @@ public enum ExceptionType {
     PHONE_VERIFICATION_EXPIRED(50083003, "手机验证码已过期"),
 
     NOTE_CREATE_EXCEPTION(500710001, "笔记创建失败"),
+    NOTE_LIKE_EXCEPTION(500710101, "笔记点赞状态修改失败"),
+    NOTE_COLLECT_EXCEPTION(500710101, "笔记收藏状态修改失败"),
 
     DATA_IS_EMPTY(50010001, "参数为空");
 
