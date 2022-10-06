@@ -67,6 +67,27 @@ public class UserController {
     }
 
 
+    @PostMapping(value = {"/follow/{userId}"})
+    public ResponseResult<String> followUser(@PathVariable(value = "userId") String userId) {
+        boolean result = this.userService.followUser(userId);
+        if (result) {
+            return ResponseResult.success("关注成功");
+        }
+        return ResponseResult.error("关注失败");
+    }
+
+
+    @GetMapping(value = {"/careUsers"})
+    public ResponseResult<List<UserVo>> getCareUsers() {
+        return ResponseResult.success(
+                this.userService.getCareUsers()
+                        .stream()
+                        .map(this.userMapper::dto2Vo)
+                        .collect(Collectors.toList())
+        );
+    }
+
+
     @Autowired
     public void setUserService(UserService userService) {
         this.userService = userService;

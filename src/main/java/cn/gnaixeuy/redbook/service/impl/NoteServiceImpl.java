@@ -1,13 +1,15 @@
 package cn.gnaixeuy.redbook.service.impl;
 
+import cn.gnaixeuy.redbook.dao.NoteCommentDao;
 import cn.gnaixeuy.redbook.dao.NoteDao;
-import cn.gnaixeuy.redbook.dao.NoteResourcesDao;
-import cn.gnaixeuy.redbook.dao.UserOthersNotesAssociatedDao;
+import cn.gnaixeuy.redbook.dao.relation.NoteResourcesDao;
+import cn.gnaixeuy.redbook.dao.relation.UserOthersNotesAssociatedDao;
 import cn.gnaixeuy.redbook.dto.NoteDto;
 import cn.gnaixeuy.redbook.entity.Note;
+import cn.gnaixeuy.redbook.entity.NoteComment;
 import cn.gnaixeuy.redbook.entity.User;
-import cn.gnaixeuy.redbook.entity.common.NoteResources;
-import cn.gnaixeuy.redbook.entity.common.UserOthersNotesAssociated;
+import cn.gnaixeuy.redbook.entity.relation.NoteResources;
+import cn.gnaixeuy.redbook.entity.relation.UserOthersNotesAssociated;
 import cn.gnaixeuy.redbook.enums.ExceptionType;
 import cn.gnaixeuy.redbook.exception.BizException;
 import cn.gnaixeuy.redbook.mapper.NoteMapper;
@@ -43,6 +45,7 @@ public class NoteServiceImpl extends ServiceImpl<NoteDao, Note> implements NoteS
     private NoteMapper noteMapper;
     private NoteResourcesDao noteResourcesDao;
     private UserOthersNotesAssociatedDao userOthersNotesAssociatedDao;
+    private NoteCommentDao noteCommentDao;
 
     /**
      * 创建新的笔记
@@ -175,6 +178,23 @@ public class NoteServiceImpl extends ServiceImpl<NoteDao, Note> implements NoteS
         return result == 1;
     }
 
+    /**
+     * 给笔记添加评论
+     *
+     * @param noteId      笔记id
+     * @param description 评论内容
+     * @return 是否成功
+     */
+    @Override
+    public boolean addComment2Note(Integer noteId, String description) {
+        User currentUser = this.userService.getCurrentUser();
+        NoteComment noteComment = new NoteComment();
+        noteComment.setNoteId(noteId);
+        noteComment.setUserId(currentUser.getId());
+        noteComment.setDescription(description);
+        return 1 == this.noteCommentDao.insert(noteComment);
+    }
+
 
     @Autowired
     public void setUserService(UserService userService) {
@@ -196,4 +216,8 @@ public class NoteServiceImpl extends ServiceImpl<NoteDao, Note> implements NoteS
         this.userOthersNotesAssociatedDao = userOthersNotesAssociatedDao;
     }
 
+    @Autowired
+    public void setNoteCommentDao(NoteCommentDao noteCommentDao) {
+        this.noteCommentDao = noteCommentDao;
+    }
 }

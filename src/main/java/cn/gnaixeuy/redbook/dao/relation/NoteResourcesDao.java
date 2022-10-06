@@ -1,6 +1,6 @@
-package cn.gnaixeuy.redbook.dao;
+package cn.gnaixeuy.redbook.dao.relation;
 
-import cn.gnaixeuy.redbook.entity.common.NoteResources;
+import cn.gnaixeuy.redbook.entity.relation.NoteResources;
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import org.apache.ibatis.annotations.Mapper;
 

@@ -8,6 +8,8 @@ import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.util.List;
+
 /**
  * <img src="http://blog.gnaixeuy.cn/wp-content/uploads/2022/09/倒闭.png"/>
  *
@@ -28,6 +30,11 @@ public interface UserService extends IService<User>, UserDetailsService {
      */
     UserDto addUser(UserCreateRequest userCreateRequest);
 
+    /**
+     * 获取当前登录用户
+     *
+     * @return 返回当前登录用户
+     */
     User getCurrentUser();
 
 
@@ -46,4 +53,20 @@ public interface UserService extends IService<User>, UserDetailsService {
      * @return {@link UserDto}
      */
     UserDto backgroundPhotoUpload(MultipartFile multipartFile);
+
+    /**
+     * 关注用户业务
+     *
+     * @param userId 被关注的用户的用户Id
+     * @return 返回业务是否成功
+     */
+    boolean followUser(String userId);
+
+
+    /**
+     * 获取当前用户关注的人
+     *
+     * @return List <UserDto> 关注的人集合
+     */
+    List<UserDto> getCareUsers();
 }

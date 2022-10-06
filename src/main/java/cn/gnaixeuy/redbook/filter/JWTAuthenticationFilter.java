@@ -42,7 +42,6 @@ public class JWTAuthenticationFilter extends BasicAuthenticationFilter {
         this.userService = userService;
     }
 
-
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain chain) throws IOException, ServletException {
         String header = request.getHeader(SecurityConfig.HEADER_STRING);

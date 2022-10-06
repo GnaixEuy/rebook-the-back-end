@@ -1,4 +1,4 @@
-package cn.gnaixeuy.redbook.entity.common;
+package cn.gnaixeuy.redbook.entity.relation;
 
 import com.baomidou.mybatisplus.annotation.TableName;
 import lombok.AllArgsConstructor;
@@ -14,18 +14,16 @@ import lombok.NoArgsConstructor;
  *
  * @author GnaixEuy
  * @version 1.0.0
- * @date 2022/10/2
+ * @date 2022/10/1
  * @see <a href="https://github.com/GnaixEuy"> GnaixEuy的GitHub </a>
  */
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-@TableName(value = "user_others_notes_associated")
-public class UserOthersNotesAssociated {
+@TableName(value = "note_resources")
+public class NoteResources {
 
-    private String userId;
     private Integer noteId;
-    private Boolean isCollected;
-    private Boolean isLike;
+    private String fileId;
 
 }

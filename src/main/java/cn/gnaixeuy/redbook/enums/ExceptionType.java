@@ -33,6 +33,10 @@ public enum ExceptionType {
     USER_INSERT_ERROR(40001077, "创建用户信息失败"),
     USER_UPDATE_ERROR(50001040, "用户更新失败"),
     USER_DELETE_ERROR(50001070, "用户删除失败"),
+    USER_FOCUS_ON_ERROR(50001060, "用户关注失败"),
+    USER_FOCUS_ON_SELF_ERROR(50001061, "禁止用户关注自己"),
+    USER_FOCUS_ON_REPEAT_ERROR(50001062, "禁止用户重复关注"),
+    USER_FOCUS_ON_NO_EXIST_ERROR(50001063, "关注用户不存在"),
     ROLE_DELETE_ERROR(50001080, "角色信息删除失败"),
     USER_ROLE_BIND_ERROR(50001081, "用户角色信息绑定失败"),
     AUTHORIZATION_EXCEPTION(5006001, "授权失败"),
@@ -43,11 +47,10 @@ public enum ExceptionType {
     PHONE_VERIFICATION_EXIT(50083001, "手机验证码已存在"),
     PHONE_VERIFICATION_CODE_ERROR(50083002, "手机验证码错误"),
     PHONE_VERIFICATION_EXPIRED(50083003, "手机验证码已过期"),
-
     NOTE_CREATE_EXCEPTION(500710001, "笔记创建失败"),
     NOTE_LIKE_EXCEPTION(500710101, "笔记点赞状态修改失败"),
     NOTE_COLLECT_EXCEPTION(500710101, "笔记收藏状态修改失败"),
-
+    NOTE_COMMENT_EXCEPTION(500710301, "笔记评论失败"),
     DATA_IS_EMPTY(50010001, "参数为空");
 
     private final Integer code;

@@ -2,12 +2,14 @@ package cn.gnaixeuy.redbook.service.impl;
 
 import cn.gnaixeuy.redbook.dao.RoleDao;
 import cn.gnaixeuy.redbook.dao.UserDao;
-import cn.gnaixeuy.redbook.dao.UserRoleAssociateDao;
+import cn.gnaixeuy.redbook.dao.relation.UserFollowRelationDao;
+import cn.gnaixeuy.redbook.dao.relation.UserRoleAssociateDao;
 import cn.gnaixeuy.redbook.dto.FileDto;
 import cn.gnaixeuy.redbook.dto.UserDto;
 import cn.gnaixeuy.redbook.entity.Role;
 import cn.gnaixeuy.redbook.entity.User;
-import cn.gnaixeuy.redbook.entity.common.UserRoleAssociate;
+import cn.gnaixeuy.redbook.entity.relation.UserFollowRelation;
+import cn.gnaixeuy.redbook.entity.relation.UserRoleAssociate;
 import cn.gnaixeuy.redbook.enums.ExceptionType;
 import cn.gnaixeuy.redbook.exception.BizException;
 import cn.gnaixeuy.redbook.mapper.UserMapper;
@@ -25,9 +27,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.Optional;
+import java.util.*;
 
 /**
  * <img src="http://blog.gnaixeuy.cn/wp-content/uploads/2022/09/倒闭.png"/>
@@ -48,6 +48,7 @@ public class UserServiceImpl extends ServiceImpl<UserDao, User> implements UserS
     private UserRoleAssociateDao userRoleAssociateDao;
     private RoleDao roleDao;
     private FileService fileService;
+    private UserFollowRelationDao userFollowRelationDao;
 
     /**
      * 新增用户业务
@@ -95,6 +96,11 @@ public class UserServiceImpl extends ServiceImpl<UserDao, User> implements UserS
         return this.baseMapper.selectOne(Wrappers.<User>lambdaQuery().eq(User::getPhone, phone));
     }
 
+    /**
+     * 获取当前登录用户
+     *
+     * @return 返回当前登录用户
+     */
     public User getCurrentUser() {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         return (User) this.loadUserByUsername(authentication.getName());
@@ -136,6 +142,50 @@ public class UserServiceImpl extends ServiceImpl<UserDao, User> implements UserS
         }
     }
 
+    /**
+     * 关注用户业务
+     *
+     * @param userId 被关注的用户的用户Id
+     * @return 返回业务是否成功
+     */
+    @Override
+    public boolean followUser(String userId) {
+        User currentUser = this.getCurrentUser();
+        if (userId.equals(currentUser.getId())) {
+            throw new BizException(ExceptionType.USER_FOCUS_ON_SELF_ERROR);
+        }
+        User usersWhoAreFollowed = this.getById(userId);
+        if (usersWhoAreFollowed == null) {
+            throw new BizException(ExceptionType.USER_FOCUS_ON_NO_EXIST_ERROR);
+        }
+        UserFollowRelation userFollowRelation = this.userFollowRelationDao.selectOne(Wrappers
+                .<UserFollowRelation>lambdaQuery()
+                .eq(UserFollowRelation::getUserId, currentUser.getId())
+                .eq(UserFollowRelation::getFollowId, usersWhoAreFollowed.getId())
+        );
+        if (userFollowRelation != null) {
+            throw new BizException(ExceptionType.USER_FOCUS_ON_REPEAT_ERROR);
+        }
+        userFollowRelation = new UserFollowRelation(currentUser.getId(), usersWhoAreFollowed.getId());
+        return 1 == this.userFollowRelationDao.insert(userFollowRelation);
+    }
+
+    /**
+     * 获取当前用户关注的人
+     *
+     * @return List <UserDto> 关注的人集合
+     */
+    @Override
+    public List<UserDto> getCareUsers() {
+        User currentUser = this.getCurrentUser();
+        List<UserDto> cares = new LinkedList<UserDto>();
+        this.userFollowRelationDao.selectList(Wrappers
+                .<UserFollowRelation>lambdaQuery()
+                .eq(UserFollowRelation::getUserId, currentUser.getId())
+        ).forEach(item -> cares.add(this.userMapper.entity2Dto(this.baseMapper.selectById(item.getFollowId()))));
+        return cares;
+    }
+
     @Autowired
     public void setUserMapper(UserMapper userMapper) {
         this.userMapper = userMapper;
@@ -154,5 +204,10 @@ public class UserServiceImpl extends ServiceImpl<UserDao, User> implements UserS
     @Autowired
     public void setFileService(FileService fileService) {
         this.fileService = fileService;
+    }
+
+    @Autowired
+    public void setUserFollowRelationDao(UserFollowRelationDao userFollowRelationDao) {
+        this.userFollowRelationDao = userFollowRelationDao;
     }
 }

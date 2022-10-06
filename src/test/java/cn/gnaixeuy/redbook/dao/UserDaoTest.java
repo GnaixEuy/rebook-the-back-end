@@ -1,7 +1,8 @@
 package cn.gnaixeuy.redbook.dao;
 
+import cn.gnaixeuy.redbook.dao.relation.UserRoleAssociateDao;
 import cn.gnaixeuy.redbook.entity.User;
-import cn.gnaixeuy.redbook.entity.common.UserRoleAssociate;
+import cn.gnaixeuy.redbook.entity.relation.UserRoleAssociate;
 import com.baomidou.mybatisplus.core.toolkit.Wrappers;
 import org.junit.jupiter.api.MethodOrderer;
 import org.junit.jupiter.api.Order;

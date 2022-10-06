@@ -81,9 +81,9 @@ public class SecurityConfig {
                 .and()
                 // 下面开始设置权限
                 .authorizeRequests(authorize -> authorize
+                                .antMatchers("/login/**").permitAll()
                                 // 请求放开
                                 .antMatchers("/swagger").permitAll()
-                                .antMatchers("/login/**").permitAll() //暂时开放
 //                        .antMatchers("/**").permitAll() //暂时开放
 //                        // 其他地址的访问均需验证权限
                                 .anyRequest()

@@ -21,7 +21,7 @@ public class KsuidIdentifierGenerator implements IdentifierGenerator {
     public Number nextId(Object entity) {
         Long id = new DefaultIdentifierGenerator().nextId(entity);
         if (id < 0) {
-            return -id;
+            return id * -1;
         }
         return id;
     }

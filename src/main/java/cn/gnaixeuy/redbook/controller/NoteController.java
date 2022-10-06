@@ -7,6 +7,7 @@ import cn.gnaixeuy.redbook.service.NoteService;
 import cn.gnaixeuy.redbook.vo.NoteCreateRequest;
 import cn.gnaixeuy.redbook.vo.NoteVo;
 import cn.gnaixeuy.redbook.vo.ResponseResult;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
@@ -28,6 +29,7 @@ import java.util.stream.Collectors;
  * @see <a href="https://github.com/GnaixEuy"> GnaixEuy的GitHub </a>
  */
 @RestController
+@Slf4j
 @RequestMapping(value = {"/notes"})
 public class NoteController {
 
@@ -83,6 +85,16 @@ public class NoteController {
                         .stream()
                         .map(this.noteMapper::dto2Vo)
                         .collect(Collectors.toList()));
+    }
+
+    @PostMapping(value = {"/comment/{noteId}"})
+    public ResponseResult<String> commentNote(@PathVariable(name = "noteId") Integer noteId, @RequestBody String description) {
+        log.info("评论:" + description);
+        boolean result = this.noteService.addComment2Note(noteId, description);
+        if (!result) {
+            throw new BizException(ExceptionType.NOTE_CREATE_EXCEPTION);
+        }
+        return ResponseResult.success("评论成功");
     }
 
 

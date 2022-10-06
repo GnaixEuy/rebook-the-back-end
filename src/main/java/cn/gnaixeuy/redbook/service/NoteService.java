@@ -61,4 +61,13 @@ public interface NoteService extends IService<Note> {
      */
     boolean updateUserNoteIsCollected(Integer noteId, boolean isCollected);
 
+    /**
+     * 给笔记添加评论
+     *
+     * @param noteId      笔记id
+     * @param description 评论内容
+     * @return 是否成功
+     */
+    boolean addComment2Note(Integer noteId, String description);
+
 }
