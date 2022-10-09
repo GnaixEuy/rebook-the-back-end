@@ -1,5 +1,6 @@
 package cn.gnaixeuy.redbook.service.impl;
 
+import cn.gnaixeuy.redbook.config.RedisConfig;
 import cn.gnaixeuy.redbook.dao.RoleDao;
 import cn.gnaixeuy.redbook.dao.UserDao;
 import cn.gnaixeuy.redbook.dao.relation.UserFollowRelationDao;
@@ -11,6 +12,7 @@ import cn.gnaixeuy.redbook.entity.User;
 import cn.gnaixeuy.redbook.entity.relation.UserFollowRelation;
 import cn.gnaixeuy.redbook.entity.relation.UserRoleAssociate;
 import cn.gnaixeuy.redbook.enums.ExceptionType;
+import cn.gnaixeuy.redbook.enums.RedisDbType;
 import cn.gnaixeuy.redbook.exception.BizException;
 import cn.gnaixeuy.redbook.mapper.UserMapper;
 import cn.gnaixeuy.redbook.service.FileService;
@@ -27,7 +29,10 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.LinkedList;
+import java.util.List;
 
 /**
  * <img src="http://blog.gnaixeuy.cn/wp-content/uploads/2022/09/倒闭.png"/>
@@ -49,6 +54,7 @@ public class UserServiceImpl extends ServiceImpl<UserDao, User> implements UserS
     private RoleDao roleDao;
     private FileService fileService;
     private UserFollowRelationDao userFollowRelationDao;
+    private RedisConfig redisConfig;
 
     /**
      * 新增用户业务
@@ -65,12 +71,11 @@ public class UserServiceImpl extends ServiceImpl<UserDao, User> implements UserS
         if (result != 1) {
             throw new BizException(ExceptionType.USER_CREATE_EXCEPTION);
         }
-        Optional<User> optionalUser = Optional.of(
-                this.baseMapper
-                        .selectOne(Wrappers
-                                .<User>lambdaQuery()
-                                .eq(User::getId, user.getId())));
-        if (optionalUser.get() == null) {
+        user = this.baseMapper
+                .selectOne(Wrappers
+                        .<User>lambdaQuery()
+                        .eq(User::getId, user.getId()));
+        if (user == null) {
             throw new BizException(ExceptionType.USER_NOT_FOUND);
         }
         //默认新用户赋予用户权限
@@ -82,17 +87,24 @@ public class UserServiceImpl extends ServiceImpl<UserDao, User> implements UserS
         Role role = this.roleDao.selectOne(Wrappers.<Role>lambdaQuery().eq(Role::getId, 1));
         ArrayList<Role> roles = new ArrayList<>();
         roles.add(role);
-        optionalUser.get().setRoles(roles);
-        return this.userMapper.entity2Dto(optionalUser.get());
+        user.setRoles(roles);
+        return this.userMapper.entity2Dto(user);
     }
 
     /**
      * @param phone 手机号码作为用户名
-     * @return
+     * @return 用户详细信息
      * @throws UsernameNotFoundException
      */
     @Override
     public UserDetails loadUserByUsername(String phone) throws UsernameNotFoundException {
+        User user = (User) this.redisConfig
+                .getRedisTemplateByDb(RedisDbType.USER_INFO.getCode())
+                .opsForValue()
+                .get(phone);
+        if (user != null) {
+            return user;
+        }
         return this.baseMapper.selectOne(Wrappers.<User>lambdaQuery().eq(User::getPhone, phone));
     }
 
@@ -178,7 +190,7 @@ public class UserServiceImpl extends ServiceImpl<UserDao, User> implements UserS
     @Override
     public List<UserDto> getCareUsers() {
         User currentUser = this.getCurrentUser();
-        List<UserDto> cares = new LinkedList<UserDto>();
+        List<UserDto> cares = new LinkedList<>();
         this.userFollowRelationDao.selectList(Wrappers
                 .<UserFollowRelation>lambdaQuery()
                 .eq(UserFollowRelation::getUserId, currentUser.getId())
@@ -209,5 +221,10 @@ public class UserServiceImpl extends ServiceImpl<UserDao, User> implements UserS
     @Autowired
     public void setUserFollowRelationDao(UserFollowRelationDao userFollowRelationDao) {
         this.userFollowRelationDao = userFollowRelationDao;
+    }
+
+    @Autowired
+    public void setRedisConfig(RedisConfig redisConfig) {
+        this.redisConfig = redisConfig;
     }
 }

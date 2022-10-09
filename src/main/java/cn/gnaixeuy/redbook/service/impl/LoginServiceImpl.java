@@ -62,7 +62,7 @@ public class LoginServiceImpl implements LoginService {
         if (StrUtil.isBlank(phoneNumber)) {
             throw new BizException(ExceptionType.DATA_IS_EMPTY);
         }
-        RedisTemplate<String, Object> redisTemplateByDb = this.redisConfig.getRedisTemplateByDb(RedisDbType.PHONEVERIFICATIONCODE.getCode());
+        RedisTemplate<String, Object> redisTemplateByDb = this.redisConfig.getRedisTemplateByDb(RedisDbType.PHONE_VERIFICATION_CODE.getCode());
         if (ObjectUtil.isNotNull(redisTemplateByDb.opsForValue().get(phoneNumber))) {
             throw new BizException(ExceptionType.PHONE_VERIFICATION_EXIT);
         }
@@ -88,7 +88,7 @@ public class LoginServiceImpl implements LoginService {
     @Override
     public String createTokenByPhone(TokenByPhoneCreateRequest tokenByPhoneCreateRequest) {
         String realVerificationCode = String.valueOf(this.redisConfig
-                .getRedisTemplateByDb(RedisDbType.PHONEVERIFICATIONCODE.getCode())
+                .getRedisTemplateByDb(RedisDbType.PHONE_VERIFICATION_CODE.getCode())
                 .opsForValue()
                 .getAndDelete(tokenByPhoneCreateRequest.getPhoneNumber()));
         if (realVerificationCode == null || "null".equals(realVerificationCode)) {
@@ -116,6 +116,14 @@ public class LoginServiceImpl implements LoginService {
         if (!user.isAccountNonLocked()) {
             throw new BizException(ExceptionType.USER_LOCKED);
         }
+        this.redisConfig
+                .getRedisTemplateByDb(RedisDbType.USER_INFO.getCode())
+                .opsForValue()
+                .set(user.getPhone(),
+                        user,
+                        SecurityConfig.EXPIRATION_TIME,
+                        TimeUnit.MILLISECONDS
+                );
         return JWT.create()
                 .withSubject(user.getUsername())
                 .withExpiresAt(new Date(System.currentTimeMillis() + SecurityConfig.EXPIRATION_TIME))

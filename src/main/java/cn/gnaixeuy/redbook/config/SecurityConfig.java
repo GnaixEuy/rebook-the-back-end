@@ -123,4 +123,5 @@ public class SecurityConfig {
     public void setAuthenticationConfiguration(AuthenticationConfiguration authenticationConfiguration) {
         this.authenticationConfiguration = authenticationConfiguration;
     }
+    
 }

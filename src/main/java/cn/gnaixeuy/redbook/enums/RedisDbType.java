@@ -18,8 +18,10 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 public enum RedisDbType {
 
-    PHONEVERIFICATIONCODE(3, "手机号验证码");
-    
+    USER_INFO(1, "用户信息"),
+
+    PHONE_VERIFICATION_CODE(3, "手机号验证码");
+
     private Integer code;
     private String type;
 
